@@ -1,0 +1,19 @@
+-- Dados de teste para H2
+INSERT INTO tb_client (name, email, phone_number, password) VALUES ('Admin', 'macedofarias@gmail.com', '21 98259-1226', '$2a$10$exampleHashedPassword');
+INSERT INTO tb_client (name, email, phone_number, password) VALUES ('Cliente Teste', 'cliente@teste.com', '11 99999-9999', '$2a$10$exampleHashedPassword');
+
+INSERT INTO tb_users (email, password, role) VALUES ('admin@teste.com', '$2a$10$exampleHashedPassword', 'ADMIN');
+
+INSERT INTO tb_category (name) VALUES ('Bolos');
+INSERT INTO tb_category (name) VALUES ('Doces');
+
+INSERT INTO tb_product (name, description, price, active, image_url) VALUES ('Bolo de Chocolate', 'Delicioso bolo', 25.00, true, 'http://example.com/bolo.jpg');
+INSERT INTO tb_product (name, description, price, active, image_url) VALUES ('Doce de Leite', 'Doce cremoso', 5.00, true, 'http://example.com/doce.jpg');
+
+INSERT INTO tb_product_category (product_id, category_id) VALUES (1, 1);
+INSERT INTO tb_product_category (product_id, category_id) VALUES (2, 2);
+
+INSERT INTO tb_order (client_id, status, total, date_create, delivery_type, delivery_fee) VALUES (2, 'PENDING', 30.00, CURRENT_TIMESTAMP, 'ENTREGA', 6.00);
+
+INSERT INTO tb_item_order (order_id, product_id, quantity, price_unit) VALUES (1, 1, 1, 25.00);
+INSERT INTO tb_item_order (order_id, product_id, quantity, price_unit) VALUES (1, 2, 1, 5.00);

@@ -27,16 +27,15 @@ import lombok.RequiredArgsConstructor;
 @PreAuthorize("hasRole('ADMIN')")
 public class UserController {
 
-  
     private final UserService service;
 
     @GetMapping(value = "/{id}")
-    public UserInsertDto findById(@PathVariable Long id) {
+    public UserDto findById(@PathVariable Long id) {
         return service.findById(id);
     }
 
     @GetMapping
-    public Page<UserInsertDto> findAll(Pageable pageable) {
+    public Page<UserDto> findAll(Pageable pageable) {
         return service.findAll(pageable);
     }
 
@@ -47,7 +46,7 @@ public class UserController {
     }
 
     @PutMapping(value = "/{id}")
-    public UserInsertDto update(@PathVariable Long id, @Valid @RequestBody UserInsertDto dto) {
+    public UserDto update(@PathVariable Long id, @Valid @RequestBody UserInsertDto dto) {
         return service.update(id, dto);
     }
 

@@ -3,11 +3,13 @@ package com.example.confeitariaMacedoFarias.services;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.confeitariaMacedoFarias.dto.UserDto;
 import com.example.confeitariaMacedoFarias.dto.UserInsertDto;
+import com.example.confeitariaMacedoFarias.entities.Role;
 import com.example.confeitariaMacedoFarias.entities.User;
 import com.example.confeitariaMacedoFarias.exceptions.DatabaseException;
 import com.example.confeitariaMacedoFarias.exceptions.ResourceNotFoundException;
@@ -20,18 +22,19 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 
     private final UserRepository repository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
-    public UserInsertDto findById(Long id) {
+    public UserDto findById(Long id) {
         User user = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuário com id " + id + " não encontrado"));
-        return new UserInsertDto(user);
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario com id " + id + " nao encontrado"));
+        return new UserDto(user.getId(), user.getEmail());
     }
 
     @Transactional(readOnly = true)
-    public Page<UserInsertDto> findAll(Pageable pageable) {
+    public Page<UserDto> findAll(Pageable pageable) {
         Page<User> result = repository.findAll(pageable);
-        return result.map(UserInsertDto::new);
+        return result.map(user -> new UserDto(user.getId(), user.getEmail()));
     }
 
     @Transactional
@@ -43,12 +46,12 @@ public class UserService {
     }
 
     @Transactional
-    public UserInsertDto update(Long id, UserInsertDto dto) {
+    public UserDto update(Long id, UserInsertDto dto) {
         User entity = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuário com id " + id + " não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario com id " + id + " nao encontrado"));
         copyDtoToEntity(dto, entity);
         entity = repository.save(entity);
-        return new UserInsertDto(entity);
+        return new UserDto(entity.getId(), entity.getEmail());
     }
 
     @Transactional
@@ -56,12 +59,15 @@ public class UserService {
         try {
             repository.deleteById(id);
         } catch (DataIntegrityViolationException e) {
-            throw new DatabaseException("Não é possível deletar usuário com referências existentes");
+            throw new DatabaseException("Nao e possivel deletar usuario com referencias existentes");
         }
     }
 
     private void copyDtoToEntity(UserInsertDto dto, User entity) {
         entity.setEmail(dto.getEmail());
-        entity.setPassword(dto.getPassword());
+        entity.setPassword(passwordEncoder.encode(dto.getPassword()));
+        if (entity.getRole() == null) {
+            entity.setRole(Role.USER);
+        }
     }
 }

@@ -31,6 +31,10 @@ public class PaymentService {
 
         PaymentClient client = new PaymentClient();
 
+        String payerEmail = order.getClient() != null && order.getClient().getEmail() != null
+                ? order.getClient().getEmail()
+                : "cliente@email.com";
+
         PaymentCreateRequest request =
                 PaymentCreateRequest.builder()
                         .transactionAmount(order.getTotal())
@@ -38,7 +42,7 @@ public class PaymentService {
                         .paymentMethodId("pix")
                         .payer(
                                 PaymentPayerRequest.builder()
-                                        .email("cliente@email.com")
+                                        .email(payerEmail)
                                         .build())
                         .build();
 
@@ -90,12 +94,12 @@ public class PaymentService {
             case "approved":
                 newStatus = PaymentStatus.APPROVED;
                 payment.setApprovedAt(Instant.now());
-                
+
                 // Atualizar status do pedido para APPROVED
                 Order order = payment.getOrder();
                 order.setStatus(StatusOrder.APPROVED);
                 orderRepository.save(order);
-                
+
                 // Enviar mensagem WhatsApp
                 sendWhatsAppMessage(order);
                 break;
@@ -117,15 +121,19 @@ public class PaymentService {
         String clientName = order.getClient().getName();
         String phone = order.getClient().getPhoneNumber();
         String address = order.getClient().getAddress();
-        
-        // Assumindo que há apenas um item no pedido, ou concatenar todos
+
+        if (address == null || address.isBlank()) {
+            address = "Nao informado";
+        }
+
         String product = order.getItems().stream()
                 .map(item -> item.getProduct().getName() + " (x" + item.getQuantity() + ")")
                 .reduce((a, b) -> a + ", " + b)
                 .orElse("N/A");
-        
+
         String value = order.getTotal().toString();
-        
-        whatsAppService.sendOrderMessage(clientName, phone, address, product, value);
+        String deliveryDate = order.getDeliveryDate() != null ? order.getDeliveryDate().toString() : "Nao informado";
+
+        whatsAppService.sendOrderMessage(clientName, phone, address, product, value, deliveryDate);
     }
 }

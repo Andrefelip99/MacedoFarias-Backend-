@@ -51,7 +51,7 @@ public class ItemOrderController {
      */
     @DeleteMapping("/{itemId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long itemId) {
-        service.delete(itemId);
+    public void delete(@PathVariable Long orderId, @PathVariable Long itemId) {
+        service.delete(orderId, itemId);
     }
 }

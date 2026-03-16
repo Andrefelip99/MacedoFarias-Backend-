@@ -1,6 +1,5 @@
 package com.example.confeitariaMacedoFarias.services;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,7 +11,6 @@ import com.example.confeitariaMacedoFarias.exceptions.DatabaseException;
 import com.example.confeitariaMacedoFarias.exceptions.ResourceNotFoundException;
 import com.example.confeitariaMacedoFarias.repositories.ClientRepository;
 
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -21,22 +19,6 @@ public class ClientService {
 
     private final ClientRepository repository;
     private final PasswordEncoder passwordEncoder;
-
-    @Value("${admin.password:securePassword123}")
-    private String adminPassword;
-
-     @PostConstruct
-    public void initAdmin() {
-        String adminEmail = "macedofarias@gmail.com";
-        if (repository.findByEmail(adminEmail).isEmpty()) {
-            Client admin = new Client();
-            admin.setName("Bruna");
-            admin.setEmail(adminEmail);
-            admin.setPhoneNumber("21 98259-1226");
-            admin.setPassword(passwordEncoder.encode(adminPassword));
-            repository.save(admin);
-        }
-    }
 
     @Transactional
     public ClientResponseDto insert(ClientInsertDto dto) {

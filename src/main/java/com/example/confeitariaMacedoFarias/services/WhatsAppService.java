@@ -27,15 +27,16 @@ public class WhatsAppService {
     @Value("${whatsapp.phone.number}")
     private String whatsappPhoneNumber;
 
-    public void sendOrderMessage(String clientName, String phone, String address, String product, String value) {
+    public void sendOrderMessage(String clientName, String phone, String address, String product, String value, String deliveryDate) {
         String message = String.format(
-            "🛒 Novo pedido recebido\n\n" +
+            "Novo pedido recebido\n\n" +
             "Cliente: %s\n" +
             "Telefone: %s\n" +
-            "Endereço: %s\n" +
+            "Endereco: %s\n" +
             "Produto: %s\n" +
-            "Valor: R$ %s",
-            clientName, phone, address, product, value
+            "Valor: R$ %s\n" +
+            "Entrega em: %s",
+            clientName, phone, address, product, value, deliveryDate
         );
 
         try {

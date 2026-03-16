@@ -60,11 +60,13 @@ public class ItemOrderService {
     }
 
     @Transactional
-    public void delete(Long itemId) {
+    public void delete(Long orderId, Long itemId) {
         try {
             ItemOrder item = itemOrderRepository.findById(itemId)
                     .orElseThrow(() -> new ResourceNotFoundException("Item não encontrado"));
-            Long orderId = item.getOrder().getId();
+            if (!item.getOrder().getId().equals(orderId)) {
+                throw new ResourceNotFoundException("Item não pertence ao pedido informado");
+            }
             itemOrderRepository.deleteById(itemId);
             // Atualizar o total do pedido
             orderService.updateTotal(orderId);
@@ -73,3 +75,4 @@ public class ItemOrderService {
         }
     }
 }
+

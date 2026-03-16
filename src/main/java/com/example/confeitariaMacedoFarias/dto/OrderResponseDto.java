@@ -2,6 +2,7 @@
 package com.example.confeitariaMacedoFarias.dto;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,6 +20,7 @@ public class OrderResponseDto {
     private BigDecimal total;
     private String deliveryType;
     private BigDecimal deliveryFee;
+    private LocalDate deliveryDate;
     private List<ItemOrderResponseDto> items;
 
     public OrderResponseDto(Order order) {
@@ -29,6 +31,7 @@ public class OrderResponseDto {
         this.total = order.getTotal(); // soma dos itens + taxa de entrega
         this.deliveryType = order.getDeliveryType().name();
         this.deliveryFee = order.getDeliveryFee();
+        this.deliveryDate = order.getDeliveryDate();
         this.items = order.getItems() != null
                 ? order.getItems().stream().map(ItemOrderResponseDto::new).collect(Collectors.toList())
                 : null;

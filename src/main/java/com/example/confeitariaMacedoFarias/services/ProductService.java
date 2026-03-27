@@ -1,4 +1,4 @@
-﻿package com.example.confeitariaMacedoFarias.services;
+package com.example.confeitariaMacedoFarias.services;
 
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;

@@ -1,4 +1,4 @@
-﻿package com.example.confeitariaMacedoFarias.dto;
+package com.example.confeitariaMacedoFarias.dto;
 
 import java.math.BigDecimal;
 import jakarta.validation.constraints.NotBlank;

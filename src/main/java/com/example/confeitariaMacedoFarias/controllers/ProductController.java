@@ -1,4 +1,4 @@
-﻿package com.example.confeitariaMacedoFarias.controllers;
+package com.example.confeitariaMacedoFarias.controllers;
 
 import java.math.BigDecimal;
 

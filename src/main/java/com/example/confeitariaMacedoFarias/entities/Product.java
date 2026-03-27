@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.Lob;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -35,6 +36,20 @@ public class Product {
     private BigDecimal price;
     private boolean active;
     private String imageUrl;
+    private String imageUrl2;
+    private String imageUrl3;
+
+    @Lob
+    private byte[] imageData;
+    private String imageContentType;
+
+    @Lob
+    private byte[] imageData2;
+    private String imageContentType2;
+
+    @Lob
+    private byte[] imageData3;
+    private String imageContentType3;
 
     @ManyToMany
     @JoinTable(

@@ -39,7 +39,7 @@ public class AuthService {
             AuthUserDto user = new AuthUserDto(
                 admin.getId(),
                 admin.getEmail(),
-                admin.getRole() != null ? admin.getRole().name() : "ADMIN",
+                admin.getRole() != null ? admin.getRole().name() : "USER",
                 null,
                 null
             );

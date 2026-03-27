@@ -26,13 +26,19 @@ public class AdminUserInitializer {
 
     @PostConstruct
     public void initAdmin() {
-        if (userRepository.findByEmail(adminEmail).isPresent()) {
+        User admin = userRepository.findByEmail(adminEmail).orElse(null);
+        if (admin != null) {
+            if (admin.getRole() != Role.ADMIN) {
+                admin.setRole(Role.ADMIN);
+                userRepository.save(admin);
+            }
             return;
         }
-        User admin = new User();
-        admin.setEmail(adminEmail);
-        admin.setPassword(passwordEncoder.encode(adminPassword));
-        admin.setRole(Role.ADMIN);
-        userRepository.save(admin);
+
+        User newAdmin = new User();
+        newAdmin.setEmail(adminEmail);
+        newAdmin.setPassword(passwordEncoder.encode(adminPassword));
+        newAdmin.setRole(Role.ADMIN);
+        userRepository.save(newAdmin);
     }
 }

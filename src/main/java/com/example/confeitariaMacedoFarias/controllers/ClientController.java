@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.confeitariaMacedoFarias.dto.ClientInsertDto;
 import com.example.confeitariaMacedoFarias.dto.ClientResponseDto;
 import com.example.confeitariaMacedoFarias.dto.LoginDto;
+import com.example.confeitariaMacedoFarias.dto.LoginResponseDto;
 import com.example.confeitariaMacedoFarias.services.ClientService;
 
 import jakarta.validation.Valid;
@@ -26,7 +27,7 @@ public class ClientController {
     private final ClientService service;
 
     /**
-     * Registro de novo cliente - público
+     * Registro de novo cliente - publico
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -35,10 +36,10 @@ public class ClientController {
     }
 
     /**
-     * Login de cliente - público
+     * Login de cliente - publico
      */
     @PostMapping("/login")
-    public ClientResponseDto login(@Valid @RequestBody LoginDto login) {
+    public LoginResponseDto login(@Valid @RequestBody LoginDto login) {
         return service.login(login.getEmail(), login.getPassword());
     }
 

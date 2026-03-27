@@ -1,10 +1,12 @@
 package com.example.confeitariaMacedoFarias.config;
 
 import java.util.List;
+import java.time.Instant;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -63,6 +65,28 @@ public class SecurityConfig {
 
                 .anyRequest().authenticated()
             )
+            .exceptionHandling(ex -> ex
+                .authenticationEntryPoint((request, response, authException) -> {
+                    response.setStatus(401);
+                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                    String body = "{\"timestamp\":\"" + Instant.now() + "\","
+                            + "\"status\":401,"
+                            + "\"error\":\"Unauthorized\","
+                            + "\"message\":\"Token ausente ou invalido.\","
+                            + "\"path\":\"" + jsonEscape(request.getRequestURI()) + "\"}";
+                    response.getWriter().write(body);
+                })
+                .accessDeniedHandler((request, response, accessDeniedException) -> {
+                    response.setStatus(403);
+                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                    String body = "{\"timestamp\":\"" + Instant.now() + "\","
+                            + "\"status\":403,"
+                            + "\"error\":\"Forbidden\","
+                            + "\"message\":\"Acesso negado: perfil sem permissao.\","
+                            + "\"path\":\"" + jsonEscape(request.getRequestURI()) + "\"}";
+                    response.getWriter().write(body);
+                })
+            )
             .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -80,5 +104,12 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
+    }
+
+    private String jsonEscape(String value) {
+        if (value == null) {
+            return "";
+        }
+        return value.replace("\\", "\\\\").replace("\"", "\\\"");
     }
 }

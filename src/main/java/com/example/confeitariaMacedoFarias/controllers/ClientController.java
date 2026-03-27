@@ -13,7 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.confeitariaMacedoFarias.dto.ClientInsertDto;
 import com.example.confeitariaMacedoFarias.dto.ClientResponseDto;
 import com.example.confeitariaMacedoFarias.dto.LoginDto;
-import com.example.confeitariaMacedoFarias.dto.LoginResponseDto;
+import com.example.confeitariaMacedoFarias.dto.AuthLoginResponseDto;
+import com.example.confeitariaMacedoFarias.services.AuthService;
 import com.example.confeitariaMacedoFarias.services.ClientService;
 
 import jakarta.validation.Valid;
@@ -25,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 public class ClientController {
 
     private final ClientService service;
+    private final AuthService authService;
 
     /**
      * Registro de novo cliente - publico
@@ -36,11 +38,12 @@ public class ClientController {
     }
 
     /**
-     * Login de cliente - publico
+     * Login (deprecated) - use /api/v1/auth/login
      */
     @PostMapping("/login")
-    public LoginResponseDto login(@Valid @RequestBody LoginDto login) {
-        return service.login(login.getEmail(), login.getPassword());
+    @Deprecated
+    public AuthLoginResponseDto login(@Valid @RequestBody LoginDto login) {
+        return authService.login(login.getEmail(), login.getPassword());
     }
 
     /**

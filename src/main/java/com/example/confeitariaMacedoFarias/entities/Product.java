@@ -32,13 +32,13 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "Nome")
+    @Column(name = "nome")
     private String name;
-    @Column(name = "Descrição")
+    @Column(name = "descricao")
     private String description;
-    @Column(name = "Preço")
+    @Column(name = "preco")
     private BigDecimal price;
-    @Column(name = "Ativo")
+    @Column(name = "ativo")
     private boolean active;
     private String imageUrl;
     private String imageUrl2;

@@ -53,10 +53,18 @@ public class ProductService {
 
     @Transactional
     public ProductResponseDto insert(ProductInsertDto dto) {
-        Product entity = new Product();
-        copyDtoToEntity(dto, entity);
-        entity = repository.save(entity);
-        return new ProductResponseDto(entity);
+        try {
+            Product entity = new Product();
+            copyDtoToEntity(dto, entity);
+            System.out.println("Saving product: " + entity.getName() + ", active: " + entity.isActive());
+            entity = repository.save(entity);
+            System.out.println("Product saved with id: " + entity.getId());
+            return new ProductResponseDto(entity);
+        } catch (Exception e) {
+            System.out.println("Error saving product: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     @Transactional

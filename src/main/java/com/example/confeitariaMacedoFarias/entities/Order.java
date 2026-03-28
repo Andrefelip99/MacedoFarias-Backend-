@@ -35,9 +35,9 @@ public class Order {
     private Long id;
 
     @Enumerated(EnumType.ORDINAL)
-    @Column(name = "Status")
+    @Column(name = "status")
     private StatusOrder status;
-    @Column(name = "Total")
+    @Column(name = "total")
     private BigDecimal total;
     @Column(name = "date_create")
     private LocalDateTime dateCreate;

@@ -21,7 +21,7 @@ public class ItemOrder {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "Quantidade")
+    @Column(name = "quantidade")
     private Integer quantity;
     @Column(name = "price_unit")
     private BigDecimal priceUnit;

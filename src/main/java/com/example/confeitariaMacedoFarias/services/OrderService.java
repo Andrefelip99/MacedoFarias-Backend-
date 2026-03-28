@@ -43,14 +43,12 @@ public class OrderService {
         }
 
         String email = authentication.getName();
+        System.out.println("EMAIL TOKEN: " + email);
 
         Client client = clientRepository.findAll().stream()
                 .filter(c -> c.getEmail().trim().equalsIgnoreCase(email.trim()))
                 .findFirst()
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado"));
-
-                System.out.println("EMAIL TOKEN: " + email);
-
 
         Order order = new Order();
         order.setClient(client);

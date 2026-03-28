@@ -28,10 +28,8 @@ public class AdminUserInitializer {
     public void initAdmin() {
         User admin = userRepository.findByEmail(adminEmail).orElse(null);
         if (admin != null) {
-            if (admin.getRole() != Role.ADMIN) {
-                admin.setRole(Role.ADMIN);
-                userRepository.save(admin);
-            }
+            admin.setRole(Role.ADMIN);
+            userRepository.save(admin);
             return;
         }
 

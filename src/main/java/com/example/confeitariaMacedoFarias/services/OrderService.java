@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.confeitariaMacedoFarias.dto.OrderInsertDto;
 import com.example.confeitariaMacedoFarias.dto.OrderResponseDto;
@@ -19,8 +20,6 @@ import com.example.confeitariaMacedoFarias.entities.StatusOrder;
 import com.example.confeitariaMacedoFarias.exceptions.ResourceNotFoundException;
 import com.example.confeitariaMacedoFarias.repositories.ClientRepository;
 import com.example.confeitariaMacedoFarias.repositories.OrderRepository;
-
-import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 
@@ -45,8 +44,13 @@ public class OrderService {
 
         String email = authentication.getName();
 
-        Client client = clientRepository.findByEmail(email)
+        Client client = clientRepository.findAll().stream()
+                .filter(c -> c.getEmail().trim().equalsIgnoreCase(email.trim()))
+                .findFirst()
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado"));
+
+                System.out.println("EMAIL TOKEN: " + email);
+
 
         Order order = new Order();
         order.setClient(client);

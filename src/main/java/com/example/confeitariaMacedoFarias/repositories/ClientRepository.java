@@ -9,6 +9,7 @@ import com.example.confeitariaMacedoFarias.entities.Client;
 public interface ClientRepository extends JpaRepository<Client, Long> {
     Optional<Client> findByEmail(String email);
 
+    Optional<Client> findByEmailIgnoreCase(String email);
 
     
 }

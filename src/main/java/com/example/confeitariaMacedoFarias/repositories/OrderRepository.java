@@ -23,4 +23,5 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
          + "LEFT JOIN FETCH i.product "
          + "WHERE o.id = :id")
     Optional<Order> findByIdWithDetails(@Param("id") Long id);
+    
 }

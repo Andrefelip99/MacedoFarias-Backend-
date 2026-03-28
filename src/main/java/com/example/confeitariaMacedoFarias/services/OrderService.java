@@ -1,14 +1,14 @@
 package com.example.confeitariaMacedoFarias.services;
 
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.example.confeitariaMacedoFarias.dto.OrderInsertDto;
 import com.example.confeitariaMacedoFarias.dto.OrderResponseDto;
@@ -19,6 +19,8 @@ import com.example.confeitariaMacedoFarias.entities.StatusOrder;
 import com.example.confeitariaMacedoFarias.exceptions.ResourceNotFoundException;
 import com.example.confeitariaMacedoFarias.repositories.ClientRepository;
 import com.example.confeitariaMacedoFarias.repositories.OrderRepository;
+
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 
@@ -34,8 +36,17 @@ public class OrderService {
 
     @Transactional
     public OrderResponseDto insert(OrderInsertDto dto) {
-        Client client = clientRepository.findById(dto.getClientId())
-                .orElseThrow(() -> new ResourceNotFoundException("Cliente nao encontrado"));
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new ResourceNotFoundException("Usuário não autenticado");
+        }
+
+        String email = authentication.getName();
+
+        Client client = clientRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado"));
 
         Order order = new Order();
         order.setClient(client);
@@ -44,7 +55,8 @@ public class OrderService {
         order.setDeliveryDate(dto.getDeliveryDate());
         order.setDeliveryFee(calculateDeliveryFee(dto.getDeliveryType()));
         order.setDateCreate(LocalDateTime.now());
-        order.setTotal(BigDecimal.ZERO); // sera calculado depois de adicionar itens
+        order.setTotal(BigDecimal.ZERO);
+
         order = orderRepository.save(order);
 
         return new OrderResponseDto(order);
@@ -60,7 +72,8 @@ public class OrderService {
     @Transactional
     public void updateTotal(Long orderId) {
         Order order = orderRepository.findByIdWithDetails(orderId)
-                .orElseThrow(() -> new ResourceNotFoundException("Pedido nao encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido não encontrado"));
+
         order.setTotal(calculateTotal(order));
         orderRepository.save(order);
     }
@@ -76,37 +89,43 @@ public class OrderService {
     @Transactional(readOnly = true)
     public OrderResponseDto findById(Long id) {
         Order order = orderRepository.findByIdWithDetails(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Pedido nao encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido não encontrado"));
+
         return new OrderResponseDto(order);
     }
 
     @Transactional
     public void delete(Long id) {
         Order order = orderRepository.findByIdWithDetails(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Pedido nao encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido não encontrado"));
+
         orderRepository.delete(order);
     }
 
     @Transactional
     public OrderResponseDto updateDeliveryType(Long orderId, DeliveryType newDeliveryType) {
         Order order = orderRepository.findByIdWithDetails(orderId)
-                .orElseThrow(() -> new ResourceNotFoundException("Pedido nao encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido não encontrado"));
+
         order.setDeliveryType(newDeliveryType);
         order.setDeliveryFee(calculateDeliveryFee(newDeliveryType));
         order.setTotal(calculateTotal(order));
+
         orderRepository.save(order);
+
         return new OrderResponseDto(order);
     }
 
     public Order findEntityById(Long id) {
         return orderRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Pedido nao encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido não encontrado"));
     }
 
     private BigDecimal calculateTotal(Order order) {
         BigDecimal itemsTotal = order.getItems().stream()
                 .map(item -> item.getTotal())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+
         return itemsTotal.add(order.getDeliveryFee());
     }
 }

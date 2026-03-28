@@ -16,6 +16,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,13 +34,19 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
+    @Column(name = "Status")
     private StatusOrder status;
+    @Column(name = "Total")
     private BigDecimal total;
+    @Column(name = "date_create")
     private LocalDateTime dateCreate;
+    @Column(name = "delivery_date")
     private LocalDate deliveryDate;
-    @Enumerated(EnumType.STRING)
+    @Column(name = "delivery_type")
+    @Enumerated(EnumType.ORDINAL)
     private DeliveryType deliveryType;
+    @Column(name = "delivery_fee")
     private BigDecimal deliveryFee;
 
     @ManyToOne

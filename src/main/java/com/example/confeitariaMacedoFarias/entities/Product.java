@@ -14,6 +14,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,9 +32,13 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "Nome")
     private String name;
+    @Column(name = "Descrição")
     private String description;
+    @Column(name = "Preço")
     private BigDecimal price;
+    @Column(name = "Ativo")
     private boolean active;
     private String imageUrl;
     private String imageUrl2;

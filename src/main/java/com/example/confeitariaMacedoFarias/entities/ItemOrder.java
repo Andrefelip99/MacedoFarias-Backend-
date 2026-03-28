@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import jakarta.persistence.Column;
 
 @Entity
 @Table(name = "tb_items_orders")
@@ -20,7 +21,9 @@ public class ItemOrder {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "Quantidade")
     private Integer quantity;
+    @Column(name = "price_unit")
     private BigDecimal priceUnit;
 
     @ManyToOne

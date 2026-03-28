@@ -1,6 +1,5 @@
 package com.example.confeitariaMacedoFarias.controllers;
 
-
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -18,12 +17,13 @@ import com.example.confeitariaMacedoFarias.dto.OrderResponseDto;
 import com.example.confeitariaMacedoFarias.entities.DeliveryType;
 import com.example.confeitariaMacedoFarias.services.OrderService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/v1/orders")
 @RequiredArgsConstructor
-//@PreAuthorize("hasAnyRole('USER', 'ADMIN')")//
+// @PreAuthorize("hasAnyRole('USER', 'ADMIN')")//
 public class OrderController {
     private final OrderService service;
 
@@ -32,8 +32,9 @@ public class OrderController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public OrderResponseDto insert(@RequestBody OrderInsertDto dto) {
-        return service.insert(dto);
+    public String insert(@RequestBody @Valid OrderInsertDto dto) {
+        System.out.println("🔥 CHEGOU NO CONTROLLER 🔥");
+        return "OK";
     }
 
     /**

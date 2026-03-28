@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class AdminUserInitializer {
-
+    
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -28,15 +28,19 @@ public class AdminUserInitializer {
     public void initAdmin() {
         User admin = userRepository.findByEmail(adminEmail).orElse(null);
         if (admin != null) {
+            System.out.println("Admin existe. Role atual: " + admin.getRole());
             admin.setRole(Role.ADMIN);
             userRepository.save(admin);
+            System.out.println("Admin atualizado com role ADMIN");
             return;
         }
 
+        System.out.println("Admin não existe, criando novo:");
         User newAdmin = new User();
         newAdmin.setEmail(adminEmail);
         newAdmin.setPassword(passwordEncoder.encode(adminPassword));
         newAdmin.setRole(Role.ADMIN);
         userRepository.save(newAdmin);
+        System.out.println("Admin criado com sucesso com role ADMIN");
     }
 }

@@ -44,12 +44,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            System.out.println("JWT Filter - User: " + username + " Authorities: " + userDetails.getAuthorities());
             if (jwtService.isTokenValid(token, userDetails)) {
                 UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities()
                 );
                 auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(auth);
+                System.out.println("JWT Filter - Authentication set for: " + username);
+            } else {
+                System.out.println("JWT Filter - Token inválido para: " + username);
             }
         }
 

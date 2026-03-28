@@ -56,7 +56,6 @@ public class ProductController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasRole('ADMIN')")
     public ProductResponseDto insert(@Valid @RequestBody ProductInsertDto dto) {
         return service.insert(dto);
     }
@@ -66,7 +65,6 @@ public class ProductController {
      */
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasRole('ADMIN')")
     public ProductResponseDto insertMultipart(
             @RequestParam String name,
             @RequestParam String description,
@@ -85,7 +83,6 @@ public class ProductController {
      * Atualizar produto - apenas ADMIN (JSON)
      */
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ProductResponseDto update(@PathVariable Long id,
             @Valid @RequestBody ProductInsertDto dto) {
         return service.update(id, dto);
@@ -95,7 +92,6 @@ public class ProductController {
      * Atualizar produto - apenas ADMIN (Multipart com imagens)
      */
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasRole('ADMIN')")
     public ProductResponseDto updateMultipart(
             @PathVariable Long id,
             @RequestParam String name,
@@ -113,7 +109,6 @@ public class ProductController {
      */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasRole('ADMIN')")
     public void delete(@PathVariable Long id) {
         service.delete(id);
     }

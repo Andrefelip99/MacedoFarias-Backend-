@@ -57,6 +57,9 @@ public class PaymentService {
                 .getPointOfInteraction()
                 .getTransactionData()
                 .getQrCodeBase64();
+        String qrCodeImage = (qrCodeBase64 == null || qrCodeBase64.isBlank())
+                ? null
+                : "data:image/png;base64," + qrCodeBase64;
 
         Payment payment = new Payment();
 
@@ -73,7 +76,7 @@ public class PaymentService {
 
         return new PaymentResponseDTO(
                 qrCode,
-                qrCodeBase64,
+                qrCodeImage,
                 payment.getStatus().name()
         );
     }

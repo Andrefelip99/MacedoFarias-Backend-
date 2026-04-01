@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -55,6 +56,7 @@ public class ProductController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ADMIN')")
     public ProductResponseDto insert(@Valid @RequestBody ProductInsertDto dto) {
         return service.insert(dto);
     }
@@ -62,8 +64,9 @@ public class ProductController {
     /**
      * Criar produto - apenas ADMIN (Multipart com imagens)
      */
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/multipart", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ADMIN')")
     public ProductResponseDto insertMultipart(
             @RequestParam String name,
             @RequestParam String description,
@@ -82,6 +85,7 @@ public class ProductController {
      * Atualizar produto - apenas ADMIN (JSON)
      */
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ProductResponseDto update(@PathVariable Long id,
             @Valid @RequestBody ProductInsertDto dto) {
         return service.update(id, dto);
@@ -90,7 +94,8 @@ public class ProductController {
     /**
      * Atualizar produto - apenas ADMIN (Multipart com imagens)
      */
-    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/{id}/multipart", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('ADMIN')")
     public ProductResponseDto updateMultipart(
             @PathVariable Long id,
             @RequestParam String name,
@@ -108,6 +113,7 @@ public class ProductController {
      */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ADMIN')")
     public void delete(@PathVariable Long id) {
         service.delete(id);
     }

@@ -26,7 +26,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User admin = userRepository.findByEmail(username).orElse(null);
+        User admin = userRepository.findByEmailIgnoreCase(username).orElse(null);
         if (admin != null) {
             List<SimpleGrantedAuthority> authorities = new ArrayList<>();
             Role role = admin.getRole() != null ? admin.getRole() : Role.USER;
@@ -37,7 +37,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             );
         }
 
-        Client client = clientRepository.findByEmail(username)
+        Client client = clientRepository.findByEmailIgnoreCase(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario nao encontrado"));
 
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();

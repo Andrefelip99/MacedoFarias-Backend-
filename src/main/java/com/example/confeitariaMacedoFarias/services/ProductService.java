@@ -10,10 +10,7 @@ import java.math.BigDecimal;
 
 import javax.imageio.ImageIO;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,13 +32,8 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public Page<ProductResponseDto> findAll(Pageable pageable) {
-        Page<Product> result = repository.findAllWithCategories(pageable);
-        List<ProductResponseDto> activeDtos = result.getContent().stream()
-                .filter(Product::isActive)
-                .map(ProductResponseDto::new)
-                .toList();
-        System.out.println("Total products in DB: " + result.getTotalElements() + ", active returned: " + activeDtos.size());
-        return new PageImpl<>(activeDtos, pageable, result.getTotalElements());
+        Page<Product> result = repository.findAllActiveWithCategories(pageable);
+        return result.map(ProductResponseDto::new);
     }
 
     @Transactional(readOnly = true)

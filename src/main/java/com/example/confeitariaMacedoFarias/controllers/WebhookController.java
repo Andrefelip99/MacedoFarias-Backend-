@@ -16,7 +16,7 @@ import com.example.confeitariaMacedoFarias.services.PaymentService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/webhook")
+@RequestMapping("/api/v1/webhook")
 @RequiredArgsConstructor
 public class WebhookController {
 

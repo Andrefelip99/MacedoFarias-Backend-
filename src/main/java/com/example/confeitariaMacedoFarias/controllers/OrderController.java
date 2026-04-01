@@ -33,9 +33,8 @@ public class OrderController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public String insert(@RequestBody @Valid OrderInsertDto dto) {
-        System.out.println("🔥 CHEGOU NO CONTROLLER 🔥");
-        return "OK";
+    public OrderResponseDto insert(@RequestBody @Valid OrderInsertDto dto) {
+        return service.insert(dto);
     }
 
     /**
@@ -62,3 +61,4 @@ public class OrderController {
         return service.findAll();
     }
 }
+

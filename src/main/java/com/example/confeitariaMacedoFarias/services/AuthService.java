@@ -29,7 +29,7 @@ public class AuthService {
 
     @Transactional(readOnly = true)
     public AuthLoginResponseDto login(String email, String password) {
-        User admin = userRepository.findByEmail(email).orElse(null);
+        User admin = userRepository.findByEmailIgnoreCase(email).orElse(null);
         if (admin != null) {
             if (!passwordEncoder.matches(password, admin.getPassword())) {
                 throw new ResourceNotFoundException("Email ou senha invalidos");
@@ -46,7 +46,7 @@ public class AuthService {
             return new AuthLoginResponseDto(token, user);
         }
 
-        Client client = clientRepository.findByEmail(email)
+        Client client = clientRepository.findByEmailIgnoreCase(email)
             .orElseThrow(() -> new ResourceNotFoundException("Email ou senha invalidos"));
 
         if (!passwordEncoder.matches(password, client.getPassword())) {

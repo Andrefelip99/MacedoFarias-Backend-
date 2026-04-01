@@ -1,6 +1,7 @@
 package com.example.confeitariaMacedoFarias.controllers;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,12 +23,13 @@ public class PaymentController {
     private final OrderService orderService;
 
     @PostMapping("/{orderId}")
-public ResponseEntity<PaymentResponseDTO> createPayment(@PathVariable Long orderId) throws Exception {
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<PaymentResponseDTO> createPayment(@PathVariable Long orderId) throws Exception {
 
-    Order order = orderService.findEntityById(orderId);
+        Order order = orderService.findEntityById(orderId);
 
-    PaymentResponseDTO response = paymentService.createPixPayment(order);
+        PaymentResponseDTO response = paymentService.createPixPayment(order);
 
-    return ResponseEntity.ok(response);
-}
+        return ResponseEntity.ok(response);
+    }
 }

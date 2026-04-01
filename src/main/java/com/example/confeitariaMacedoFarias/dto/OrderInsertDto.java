@@ -14,7 +14,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class OrderInsertDto {
 
-    @NotNull(message = "O cliente e obrigatorio")
     private Long clientId;
 
     @NotNull(message = "O tipo de entrega e obrigatorio")

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -37,18 +38,28 @@ public class OrderService {
     public OrderResponseDto insert(OrderInsertDto dto) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Client client = null;
 
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new ResourceNotFoundException("Usuário não autenticado");
+        if (authentication != null && authentication.isAuthenticated()
+                && !(authentication instanceof AnonymousAuthenticationToken)) {
+            String email = authentication.getName();
+            System.out.println("EMAIL TOKEN: " + email);
+            client = clientRepository.findByEmailIgnoreCase(email).orElse(null);
         }
 
-        String email = authentication.getName();
-        System.out.println("EMAIL TOKEN: " + email);
-
-        Client client = clientRepository.findAll().stream()
-                .filter(c -> c.getEmail().trim().equalsIgnoreCase(email.trim()))
-                .findFirst()
-                .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado"));
+        if (client == null) {
+            if (dto.getClientId() == null) {
+                throw new ResourceNotFoundException("Cliente não informado");
+            }
+            client = clientRepository.findById(dto.getClientId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado"));
+        } else if (dto.getClientId() != null && !client.getId().equals(dto.getClientId())) {
+            if (!hasRole(authentication, "ROLE_ADMIN")) {
+                throw new ResourceNotFoundException("Cliente não corresponde ao usuário autenticado");
+            }
+            client = clientRepository.findById(dto.getClientId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado"));
+        }
 
         Order order = new Order();
         order.setClient(client);
@@ -121,6 +132,14 @@ public class OrderService {
     public Order findEntityById(Long id) {
         return orderRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Pedido não encontrado"));
+    }
+
+    private boolean hasRole(Authentication authentication, String role) {
+        if (authentication == null) {
+            return false;
+        }
+        return authentication.getAuthorities().stream()
+                .anyMatch(auth -> role.equals(auth.getAuthority()));
     }
 
     private BigDecimal calculateTotal(Order order) {

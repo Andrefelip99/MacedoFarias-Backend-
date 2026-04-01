@@ -1,0 +1,32 @@
+-- Popula categorias
+INSERT INTO tb_category (name) VALUES ('Sobremesas');
+INSERT INTO tb_category (name) VALUES ('Bolos');
+INSERT INTO tb_category (name) VALUES ('Brownies');
+INSERT INTO tb_category (name) VALUES ('Delícias no Pote');
+INSERT INTO tb_category (name) VALUES ('Slice Cake');
+
+-- Popula produtos
+INSERT INTO tb_product (name, description, price, active, image_url) VALUES
+  ('Pudim', 'Pudim tradicional', 70.00, TRUE, NULL),
+  ('Delícia de Abacaxi', 'Sobremesa de abacaxi com coco', 110.00, TRUE, NULL),
+  ('Banoffee de Travessa', 'Banoffee com doce de leite', 100.00, TRUE, NULL),
+  ('Pavê de Limão', 'Pavê cremoso de limão', 100.00, TRUE, NULL),
+  ('Bolo de Chocolate', 'Bolo de chocolate tradicional', 45.00, TRUE, NULL),
+  ('Brownie de Brigadeiro', 'Brownie com recheio de brigadeiro', 6.00, TRUE, NULL),
+  ('Brownie Doce de Leite', 'Brownie com doce de leite', 6.00, TRUE, NULL),
+  ('Brownie de Ninho', 'Brownie com recheio de Ninho', 6.00, TRUE, NULL),
+  ('Delícia no Pote', 'Sobremesa servida em pote', 25.00, TRUE, NULL),
+  ('Slice Cake', 'Fatia de bolo (slice cake)', 15.00, TRUE, NULL);
+
+-- Relaciona produtos com categorias
+INSERT INTO tb_product_category (product_id, category_id) VALUES
+  (1, 1),
+  (2, 1),
+  (3, 1),
+  (4, 1),
+  (5, 2),
+  (6, 3),
+  (7, 3),
+  (8, 3),
+  (9, 4),
+  (10, 5);

@@ -30,6 +30,14 @@ public class AdminUserInitializer {
         if (admin != null) {
             System.out.println("Admin existe. Role atual: " + admin.getRole());
             admin.setRole(Role.ADMIN);
+            String storedPassword = admin.getPassword();
+            if (storedPassword == null || storedPassword.isBlank()) {
+                admin.setPassword(passwordEncoder.encode(adminPassword));
+                System.out.println("Admin sem senha, gerando nova senha a partir da config");
+            } else if (!isBcryptHash(storedPassword)) {
+                admin.setPassword(passwordEncoder.encode(storedPassword));
+                System.out.println("Admin com senha em texto, re-criptografando");
+            }
             userRepository.save(admin);
             System.out.println("Admin atualizado com role ADMIN");
             return;
@@ -42,5 +50,9 @@ public class AdminUserInitializer {
         newAdmin.setRole(Role.ADMIN);
         userRepository.save(newAdmin);
         System.out.println("Admin criado com sucesso com role ADMIN");
+    }
+
+    private boolean isBcryptHash(String value) {
+        return value.startsWith("$2a$") || value.startsWith("$2b$") || value.startsWith("$2y$");
     }
 }

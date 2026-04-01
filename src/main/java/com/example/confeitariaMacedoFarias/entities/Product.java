@@ -38,7 +38,7 @@ public class Product {
     private String description;
     @Column(name = "preco")
     private BigDecimal price;
-    @Column(name = "ativo")
+    @Column(name = "active")
     private boolean active;
     private String imageUrl;
     private String imageUrl2;

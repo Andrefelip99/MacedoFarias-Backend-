@@ -64,7 +64,7 @@ public class ProductController {
     /**
      * Criar produto - apenas ADMIN (Multipart com imagens)
      */
-    @PostMapping(value = "/multipart", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ADMIN')")
     public ProductResponseDto insertMultipart(
@@ -75,10 +75,24 @@ public class ProductController {
             @RequestPart("image1") MultipartFile image1,
             @RequestPart(value = "image2", required = false) MultipartFile image2,
             @RequestPart(value = "image3", required = false) MultipartFile image3) {
-        if (image1 == null || image1.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Imagem principal obrigatoria");
-        }
-        return service.insertMultipart(name, description, price, active, image1, image2, image3);
+        return insertMultipartInternal(name, description, price, active, image1, image2, image3);
+    }
+
+    /**
+     * Criar produto - apenas ADMIN (Multipart com imagens) - rota alternativa
+     */
+    @PostMapping(value = "/multipart", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ADMIN')")
+    public ProductResponseDto insertMultipartAlias(
+            @RequestParam String name,
+            @RequestParam String description,
+            @RequestParam BigDecimal price,
+            @RequestParam(defaultValue = "true") boolean active,
+            @RequestPart("image1") MultipartFile image1,
+            @RequestPart(value = "image2", required = false) MultipartFile image2,
+            @RequestPart(value = "image3", required = false) MultipartFile image3) {
+        return insertMultipartInternal(name, description, price, active, image1, image2, image3);
     }
 
     /**
@@ -94,9 +108,26 @@ public class ProductController {
     /**
      * Atualizar produto - apenas ADMIN (Multipart com imagens)
      */
-    @PutMapping(value = "/{id}/multipart", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
     public ProductResponseDto updateMultipart(
+            @PathVariable Long id,
+            @RequestParam String name,
+            @RequestParam String description,
+            @RequestParam BigDecimal price,
+            @RequestParam(defaultValue = "true") boolean active,
+            @RequestPart(value = "image1", required = false) MultipartFile image1,
+            @RequestPart(value = "image2", required = false) MultipartFile image2,
+            @RequestPart(value = "image3", required = false) MultipartFile image3) {
+        return service.updateMultipart(id, name, description, price, active, image1, image2, image3);
+    }
+
+    /**
+     * Atualizar produto - apenas ADMIN (Multipart com imagens) - rota alternativa
+     */
+    @PutMapping(value = "/{id}/multipart", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('ADMIN')")
+    public ProductResponseDto updateMultipartAlias(
             @PathVariable Long id,
             @RequestParam String name,
             @RequestParam String description,
@@ -116,6 +147,20 @@ public class ProductController {
     @PreAuthorize("hasRole('ADMIN')")
     public void delete(@PathVariable Long id) {
         service.delete(id);
+    }
+
+    private ProductResponseDto insertMultipartInternal(
+            String name,
+            String description,
+            BigDecimal price,
+            boolean active,
+            MultipartFile image1,
+            MultipartFile image2,
+            MultipartFile image3) {
+        if (image1 == null || image1.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Imagem principal obrigatoria");
+        }
+        return service.insertMultipart(name, description, price, active, image1, image2, image3);
     }
 
 }

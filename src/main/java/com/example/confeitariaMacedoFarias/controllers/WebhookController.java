@@ -30,25 +30,37 @@ public class WebhookController {
             @RequestBody Map<String, Object> payload,
             @RequestHeader(value = "x-signature", required = false) String signature) {
 
-        // Validacao basica de assinatura (usar segredo compartilhado)
-        if (signature == null || signature.isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
-        if (webhookSecret == null || webhookSecret.isBlank()) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-        if (!signature.equals(webhookSecret)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        // Validacao simples de assinatura (quando configurado)
+        if (webhookSecret != null && !webhookSecret.isBlank()) {
+            if (signature == null || signature.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+            if (!signature.equals(webhookSecret)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
         }
 
         try {
-            String action = (String) payload.get("action");
-            if ("payment.updated".equals(action)) {
-                @SuppressWarnings("unchecked")
-                Map<String, Object> data = (Map<String, Object>) payload.get("data");
-                String paymentId = (String) data.get("id");
+            String action = payload.get("action") != null ? payload.get("action").toString() : null;
+            String type = payload.get("type") != null ? payload.get("type").toString() : null;
 
-                paymentService.updatePaymentStatus(paymentId);
+            boolean isPaymentEvent = "payment.updated".equals(action) || "payment".equals(type);
+            if (isPaymentEvent) {
+                String paymentId = null;
+                Object dataObj = payload.get("data");
+                if (dataObj instanceof Map) {
+                    Object idObj = ((Map<?, ?>) dataObj).get("id");
+                    if (idObj != null) {
+                        paymentId = idObj.toString();
+                    }
+                }
+                if (paymentId == null && payload.get("id") != null) {
+                    paymentId = payload.get("id").toString();
+                }
+
+                if (paymentId != null && !paymentId.isBlank()) {
+                    paymentService.updatePaymentStatus(paymentId);
+                }
             }
         } catch (Exception e) {
             // Log error

@@ -69,6 +69,7 @@ public class OrderService {
         order.setDeliveryFee(calculateDeliveryFee(dto.getDeliveryType()));
         order.setDateCreate(LocalDateTime.now());
         order.setTotal(BigDecimal.ZERO);
+        applyDeliveryAddress(order, client, dto);
 
         order = orderRepository.save(order);
 
@@ -148,5 +149,63 @@ public class OrderService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         return itemsTotal.add(order.getDeliveryFee());
+    }
+
+    private void applyDeliveryAddress(Order order, Client client, OrderInsertDto dto) {
+        String zipCode = firstNonBlank(dto.getZipCode(), client.getZipCode());
+        String street = firstNonBlank(dto.getStreet(), client.getStreet());
+        String number = firstNonBlank(dto.getNumber(), client.getNumber());
+        String complement = firstNonBlank(dto.getComplement(), client.getComplement());
+        String neighborhood = firstNonBlank(dto.getNeighborhood(), client.getNeighborhood());
+        String city = firstNonBlank(dto.getCity(), client.getCity());
+        String state = firstNonBlank(dto.getState(), client.getState());
+
+        if (dto.getDeliveryType() == DeliveryType.ENTREGA) {
+            if (isBlank(zipCode) || isBlank(street) || isBlank(number)
+                    || isBlank(neighborhood) || isBlank(city) || isBlank(state)) {
+                throw new ResourceNotFoundException("Endereco de entrega incompleto");
+            }
+        }
+
+        order.setDeliveryZipCode(zipCode);
+        order.setDeliveryStreet(street);
+        order.setDeliveryNumber(number);
+        order.setDeliveryComplement(complement);
+        order.setDeliveryNeighborhood(neighborhood);
+        order.setDeliveryCity(city);
+        order.setDeliveryState(state);
+
+        // Atualiza endereco do cliente quando informado no pedido
+        if (hasAnyAddress(dto)) {
+            client.setZipCode(zipCode);
+            client.setStreet(street);
+            client.setNumber(number);
+            client.setComplement(complement);
+            client.setNeighborhood(neighborhood);
+            client.setCity(city);
+            client.setState(state);
+            clientRepository.save(client);
+        }
+    }
+
+    private boolean hasAnyAddress(OrderInsertDto dto) {
+        return !isBlank(dto.getZipCode())
+                || !isBlank(dto.getStreet())
+                || !isBlank(dto.getNumber())
+                || !isBlank(dto.getComplement())
+                || !isBlank(dto.getNeighborhood())
+                || !isBlank(dto.getCity())
+                || !isBlank(dto.getState());
+    }
+
+    private String firstNonBlank(String primary, String fallback) {
+        if (!isBlank(primary)) {
+            return primary;
+        }
+        return isBlank(fallback) ? null : fallback;
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.trim().isEmpty();
     }
 }

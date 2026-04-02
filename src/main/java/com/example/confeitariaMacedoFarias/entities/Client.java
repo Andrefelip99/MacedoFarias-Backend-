@@ -29,7 +29,13 @@ public class Client {
     private String name;
     private String email;
     private String phoneNumber;
-    private String address;
+    private String zipCode;
+    private String street;
+    private String number;
+    private String complement;
+    private String neighborhood;
+    private String city;
+    private String state;
     private String password;
 
     @OneToMany(mappedBy = "client")

@@ -41,6 +41,13 @@ public class AuthService {
                 admin.getEmail(),
                 admin.getRole() != null ? admin.getRole().name() : "USER",
                 null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
                 null
             );
             return new AuthLoginResponseDto(token, user);
@@ -60,7 +67,14 @@ public class AuthService {
             client.getEmail(),
             "USER",
             client.getName(),
-            client.getPhoneNumber()
+            client.getPhoneNumber(),
+            client.getZipCode(),
+            client.getStreet(),
+            client.getNumber(),
+            client.getComplement(),
+            client.getNeighborhood(),
+            client.getCity(),
+            client.getState()
         );
         return new AuthLoginResponseDto(token, user);
     }

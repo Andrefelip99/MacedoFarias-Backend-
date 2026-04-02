@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.confeitariaMacedoFarias.dto.PaymentResponseDTO;
+import com.example.confeitariaMacedoFarias.entities.DeliveryType;
 import com.example.confeitariaMacedoFarias.entities.Order;
 import com.example.confeitariaMacedoFarias.entities.Payment;
 import com.example.confeitariaMacedoFarias.entities.PaymentStatus;
@@ -123,10 +124,14 @@ public class PaymentService {
     private void sendWhatsAppMessage(Order order) {
         String clientName = order.getClient().getName();
         String phone = order.getClient().getPhoneNumber();
-        String address = order.getClient().getAddress();
-
-        if (address == null || address.isBlank()) {
-            address = "Nao informado";
+        String address;
+        if (order.getDeliveryType() == DeliveryType.RETIRADA_NO_LOCAL) {
+            address = "Retirada no local";
+        } else {
+            address = buildAddress(order);
+            if (address.isBlank()) {
+                address = "Nao informado";
+            }
         }
 
         String product = order.getItems().stream()
@@ -138,5 +143,19 @@ public class PaymentService {
         String deliveryDate = order.getDeliveryDate() != null ? order.getDeliveryDate().toString() : "Nao informado";
 
         whatsAppService.sendOrderMessage(clientName, phone, address, product, value, deliveryDate);
+    }
+
+    private String buildAddress(Order order) {
+        StringBuilder sb = new StringBuilder();
+        if (order.getDeliveryStreet() != null) sb.append(order.getDeliveryStreet());
+        if (order.getDeliveryNumber() != null) sb.append(", ").append(order.getDeliveryNumber());
+        if (order.getDeliveryComplement() != null && !order.getDeliveryComplement().isBlank()) {
+            sb.append(" - ").append(order.getDeliveryComplement());
+        }
+        if (order.getDeliveryNeighborhood() != null) sb.append(" - ").append(order.getDeliveryNeighborhood());
+        if (order.getDeliveryCity() != null) sb.append(" - ").append(order.getDeliveryCity());
+        if (order.getDeliveryState() != null) sb.append("/").append(order.getDeliveryState());
+        if (order.getDeliveryZipCode() != null) sb.append(" CEP ").append(order.getDeliveryZipCode());
+        return sb.toString().trim();
     }
 }

@@ -48,6 +48,20 @@ public class Order {
     private DeliveryType deliveryType;
     @Column(name = "delivery_fee")
     private BigDecimal deliveryFee;
+    @Column(name = "delivery_zip_code")
+    private String deliveryZipCode;
+    @Column(name = "delivery_street")
+    private String deliveryStreet;
+    @Column(name = "delivery_number")
+    private String deliveryNumber;
+    @Column(name = "delivery_complement")
+    private String deliveryComplement;
+    @Column(name = "delivery_neighborhood")
+    private String deliveryNeighborhood;
+    @Column(name = "delivery_city")
+    private String deliveryCity;
+    @Column(name = "delivery_state")
+    private String deliveryState;
 
     @ManyToOne
     @JoinColumn(name = "client_id")

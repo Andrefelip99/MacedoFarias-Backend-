@@ -29,6 +29,13 @@ public class ClientService {
         client.setName(dto.getName());
         client.setEmail(dto.getEmail());
         client.setPhoneNumber(dto.getPhoneNumber());
+        client.setZipCode(dto.getZipCode());
+        client.setStreet(dto.getStreet());
+        client.setNumber(dto.getNumber());
+        client.setComplement(dto.getComplement());
+        client.setNeighborhood(dto.getNeighborhood());
+        client.setCity(dto.getCity());
+        client.setState(dto.getState());
         client.setPassword(passwordEncoder.encode(dto.getPassword()));
         client = repository.save(client);
         return new ClientResponseDto(client);

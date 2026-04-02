@@ -26,6 +26,8 @@ public class PaymentController {
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<PaymentResponseDTO> createPayment(@PathVariable Long orderId) throws Exception {
 
+        // Recalcula o total para garantir que itens + frete estejam atualizados
+        orderService.updateTotal(orderId);
         Order order = orderService.findEntityById(orderId);
 
         PaymentResponseDTO response = paymentService.createPixPayment(order);

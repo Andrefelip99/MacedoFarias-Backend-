@@ -44,6 +44,14 @@ public class ProductController {
     }
 
     /**
+     * Listar produtos (inclui inativos) - ADMIN
+     */
+    @GetMapping("/admin")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Page<ProductResponseDto> findAllAdmin(Pageable pageable) {
+        return service.findAllAdmin(pageable);
+    }
+    /**
      * Buscar produto por id - pÃºblico
      */
     @GetMapping("/{id}")
@@ -164,3 +172,4 @@ public class ProductController {
     }
 
 }
+

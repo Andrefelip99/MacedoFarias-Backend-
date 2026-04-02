@@ -3,6 +3,7 @@ package com.example.confeitariaMacedoFarias.repositories;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -14,4 +15,8 @@ public interface ItemOrderRepository extends JpaRepository<ItemOrder, Long> {
          + "LEFT JOIN FETCH i.product "
          + "WHERE i.order.id = :orderId")
     List<ItemOrder> findByOrderIdWithProduct(@Param("orderId") Long orderId);
+
+    @Modifying
+    @Query("DELETE FROM ItemOrder i WHERE i.product.id = :productId")
+    void deleteByProductId(@Param("productId") Long productId);
 }

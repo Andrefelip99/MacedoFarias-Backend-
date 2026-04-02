@@ -20,6 +20,7 @@ import com.example.confeitariaMacedoFarias.dto.ProductInsertDto;
 import com.example.confeitariaMacedoFarias.dto.ProductResponseDto;
 import com.example.confeitariaMacedoFarias.entities.Product;
 import com.example.confeitariaMacedoFarias.exceptions.ResourceNotFoundException;
+import com.example.confeitariaMacedoFarias.repositories.ItemOrderRepository;
 import com.example.confeitariaMacedoFarias.repositories.ProductRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -29,10 +30,17 @@ import lombok.RequiredArgsConstructor;
 public class ProductService {
 
     private final ProductRepository repository;
+    private final ItemOrderRepository itemOrderRepository;
 
     @Transactional(readOnly = true)
     public Page<ProductResponseDto> findAll(Pageable pageable) {
         Page<Product> result = repository.findAllActiveWithCategories(pageable);
+        return result.map(ProductResponseDto::new);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ProductResponseDto> findAllAdmin(Pageable pageable) {
+        Page<Product> result = repository.findAllWithCategories(pageable);
         return result.map(ProductResponseDto::new);
     }
 
@@ -97,6 +105,9 @@ public class ProductService {
     public void delete(Long id) {
         Product product = repository.findByIdWithCategories(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Produto com id " + id + " nÃƒÂ£o encontrado"));
+        // Remove relações para permitir exclusão definitiva
+        itemOrderRepository.deleteByProductId(id);
+        repository.deleteProductCategories(id);
         repository.delete(product);
     }
 
@@ -179,3 +190,6 @@ public class ProductService {
         }
     }
 }
+
+
+

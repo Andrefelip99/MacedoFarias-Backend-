@@ -15,6 +15,8 @@ public class OrderResponseDto {
     private Long id;
     private Long clientId;
     private String clientName;
+    private String clientEmail;
+    private String clientPhoneNumber;
     private String status;
     private BigDecimal total;
     private String deliveryType;
@@ -33,6 +35,8 @@ public class OrderResponseDto {
         this.id = order.getId();
         this.clientId = order.getClient().getId();
         this.clientName = order.getClient().getName();
+        this.clientEmail = order.getClient().getEmail();
+        this.clientPhoneNumber = order.getClient().getPhoneNumber();
         this.status = order.getStatus().name();
         this.total = order.getTotal();
         this.deliveryType = order.getDeliveryType().name();

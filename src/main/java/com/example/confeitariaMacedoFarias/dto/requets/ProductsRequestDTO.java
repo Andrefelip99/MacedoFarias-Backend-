@@ -1,5 +1,7 @@
 package com.example.confeitariaMacedoFarias.dto.requets;
 
+import java.math.BigDecimal;
+
 import com.example.confeitariaMacedoFarias.entities.Category;
 
 import jakarta.validation.constraints.NotBlank;
@@ -23,7 +25,10 @@ public record ProductsRequestDTO(
     String link,
     
     @NotNull(message = "O campo category é obrigatório")
-    Category category
+    Category category,
+
+    @NotNull(message = "O campo price é obrigatório")
+    BigDecimal price
 
 ) {}
 

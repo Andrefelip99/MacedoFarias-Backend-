@@ -1,12 +1,9 @@
 package com.example.confeitariaMacedoFarias.services;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -119,22 +116,22 @@ class ProductsServiceTest {
     void insertShouldRejectMissingRequiredFields() {
         assertThrows(BusinessException.class, () -> productsService.insert(null));
         assertThrows(BusinessException.class, () -> productsService.insert(
-                new ProductsRequestDTO("", "description", "image", null, null, "link", null)));
+                new ProductsRequestDTO("", "description", "image", null, null, "link", null, BigDecimal.valueOf(20.0))));
         assertThrows(BusinessException.class, () -> productsService.insert(
-                new ProductsRequestDTO("title", "", "image", null, null, "link", null)));
+                new ProductsRequestDTO("title", "", "image", null, null, "link", null, BigDecimal.valueOf(20.0))));
         assertThrows(BusinessException.class, () -> productsService.insert(
-                new ProductsRequestDTO("title", "description", "", null, null, "link", null)));
+                new ProductsRequestDTO("title", "description", "", null, null, "link", null, BigDecimal.valueOf(20.0))));
         assertThrows(BusinessException.class, () -> productsService.insert(
-                new ProductsRequestDTO("title", "description", "image", null, null, "", null)));
+                new ProductsRequestDTO("title", "description", "image", null, null, "", null, BigDecimal.valueOf(20.0))));
         assertThrows(BusinessException.class, () -> productsService.insert(
-            new ProductsRequestDTO("title", "description", "image", null, null, "link", null)));
+            new ProductsRequestDTO("title", "description", "image", null, null, "link", null, BigDecimal.valueOf(20.0))));
         verifyNoInteractions(productsRepository);
     }
 
     @Test
     void updateShouldValidateBeforeLoadingProduct() {
         assertThrows(BusinessException.class, () -> productsService.update(1L,
-                new ProductsRequestDTO(null, "description", "image", null, null, "link", null)));
+                new ProductsRequestDTO(null, "description", "image", null, null, "link", null, BigDecimal.valueOf(20.0))));
 
         verifyNoInteractions(productsRepository);
     }
@@ -147,18 +144,20 @@ class ProductsServiceTest {
                 "https://example.com/two.jpg",
                 "https://example.com/three.jpg",
                 "https://example.com/bolo",
-                Category.Bolos);
+                Category.Bolos, BigDecimal.valueOf(20.0));
     }
 
     private Products product(Long id) {
-        return new Products(
-                id,
-                "Bolo de chocolate",
-                "Bolo com cobertura",
-                "https://example.com/one.jpg",
-                "https://example.com/two.jpg",
-                "https://example.com/three.jpg",
-                "https://example.com/bolo",
-                Category.Bolos);
-    }
+    return new Products(
+            id,
+            "Bolo de chocolate",
+            BigDecimal.valueOf(20.0),
+            "Bolo com cobertura",
+            "https://example.com/one.jpg",
+            "https://example.com/two.jpg",
+            "https://example.com/three.jpg",
+            "https://example.com/bolo",
+            Category.Bolos
+    );
+}
 }

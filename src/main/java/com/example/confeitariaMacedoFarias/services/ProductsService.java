@@ -46,6 +46,7 @@ public class ProductsService {
         entity.setThreeImageUrl(dto.threeImageUrl());
         entity.setLink(dto.link());
         entity.setCategory(dto.category());
+        entity.setPrice(dto.price());
 
         entity = productsRepository.save(entity);
 
@@ -65,6 +66,7 @@ public class ProductsService {
         entity.setThreeImageUrl(dto.threeImageUrl());
         entity.setLink(dto.link());
         entity.setCategory(dto.category());
+        entity.setPrice(dto.price());
         entity = productsRepository.save(entity);
 
         return new ProductsResponseDTO(entity);

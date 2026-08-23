@@ -1,4 +1,6 @@
 package com.example.confeitariaMacedoFarias.dto.response;
+import java.math.BigDecimal;
+
 import com.example.confeitariaMacedoFarias.entities.Category;
 import com.example.confeitariaMacedoFarias.entities.Products;
 
@@ -10,7 +12,8 @@ public record ProductsResponseDTO(
         String twoImageUrl,
         String threeImageUrl,
         String link,
-        Category category
+        Category category,
+        BigDecimal price
 ) {
 
     public ProductsResponseDTO(Products entity) {
@@ -22,7 +25,8 @@ public record ProductsResponseDTO(
                 entity.getTwoImageUrl(),
                 entity.getThreeImageUrl(),
                 entity.getLink(),
-                entity.getCategory()
+                entity.getCategory(),
+                entity.getPrice()
         );
     }
 }

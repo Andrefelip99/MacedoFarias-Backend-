@@ -1,81 +1,43 @@
 package com.example.confeitariaMacedoFarias.services;
 
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
+
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.example.confeitariaMacedoFarias.dto.AuthLoginResponseDto;
-import com.example.confeitariaMacedoFarias.dto.AuthUserDto;
-import com.example.confeitariaMacedoFarias.entities.Client;
-import com.example.confeitariaMacedoFarias.entities.User;
-import com.example.confeitariaMacedoFarias.exceptions.ResourceNotFoundException;
-import com.example.confeitariaMacedoFarias.repositories.ClientRepository;
+import com.example.confeitariaMacedoFarias.dto.LoginResponseDTO;
+import com.example.confeitariaMacedoFarias.dto.requets.UserRequestDTO;
 import com.example.confeitariaMacedoFarias.repositories.UserRepository;
-import com.example.confeitariaMacedoFarias.security.JwtService;
-
-import lombok.RequiredArgsConstructor;
 
 @Service
-@RequiredArgsConstructor
 public class AuthService {
 
     private final UserRepository userRepository;
-    private final ClientRepository clientRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
-    private final UserDetailsService userDetailsService;
 
-    @Transactional(readOnly = true)
-    public AuthLoginResponseDto login(String email, String password) {
-        User admin = userRepository.findByEmailIgnoreCase(email).orElse(null);
-        if (admin != null) {
-            if (!passwordEncoder.matches(password, admin.getPassword())) {
-                throw new ResourceNotFoundException("Email ou senha invalidos");
-            }
-            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-            String token = jwtService.generateToken(userDetails);
-            AuthUserDto user = new AuthUserDto(
-                admin.getId(),
-                admin.getEmail(),
-                admin.getRole() != null ? admin.getRole().name() : "USER",
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-            );
-            return new AuthLoginResponseDto(token, user);
-        }
+    public AuthService(
+            UserRepository userRepository,
+            AuthenticationManager authenticationManager,
+            JwtService jwtService) {
 
-        Client client = clientRepository.findByEmailIgnoreCase(email)
-            .orElseThrow(() -> new ResourceNotFoundException("Email ou senha invalidos"));
+        this.userRepository = userRepository;
+        this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
+    }
 
-        if (!passwordEncoder.matches(password, client.getPassword())) {
-            throw new ResourceNotFoundException("Email ou senha invalidos");
-        }
+    public LoginResponseDTO login(UserRequestDTO dto) {
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-        String token = jwtService.generateToken(userDetails);
-        AuthUserDto user = new AuthUserDto(
-            client.getId(),
-            client.getEmail(),
-            "USER",
-            client.getName(),
-            client.getPhoneNumber(),
-            client.getZipCode(),
-            client.getStreet(),
-            client.getNumber(),
-            client.getComplement(),
-            client.getNeighborhood(),
-            client.getCity(),
-            client.getState()
-        );
-        return new AuthLoginResponseDto(token, user);
+        UsernamePasswordAuthenticationToken usernamePassword = new UsernamePasswordAuthenticationToken(
+                dto.email(),
+                dto.password());
+
+        Authentication authentication = authenticationManager.authenticate(usernamePassword);
+
+        String token = jwtService.generateToken(
+                authentication.getName());
+
+        return new LoginResponseDTO(token);
     }
 }
